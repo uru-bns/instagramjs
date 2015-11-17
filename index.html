@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8">
+    <title>Instagram JS</title>
+  </head>
+  <body>
+    <input type="text" id="access_token" />
+    <hr />
+    <input type="text" id="tag_name" />&nbsp;<input type="button" value="Images from Instagram" onclick="getInstagramImages();" />
+    <hr />
+    <div class="instagram"></div>
+    <script src="http://code.jquery.com/jquery.js"></script>
+    <script type="text/javascript">
+      function getInstagramImages()
+      {
+        accessToken = $("#access_token").val();
+        tagName = $("#tag_name").val();
+
+        $(function() {
+          $(".instagram").text("loading...");
+            $.ajax({
+              url: "https://api.instagram.com/v1/tags/" + tagName + "/media/recent",
+              data: { access_token: accessToken },
+              dataType: "jsonp",
+              error: function(jqXHR, textStatus, errorThrown) {
+                $(".instagram").text(textStatus);
+              },
+              success: function(data, textStatus, jqXHR) {
+                console.log(data);
+                $(".instagram").text("");
+                for (var i = 0, length = data.data.length; i < length; i++) {
+                  var d = data.data[i];
+                  $(".instagram").append(
+                    $("<div>").addClass("image").append(
+                      $("<a>").attr("href", d.link).attr("target", "_blank").append(
+                        $("<img>").attr("src", d.images.low_resolution.url)
+                      )
+                    )
+                  );
+                }
+              }
+            });
+        });
+      }
+    </script>
+  </body>
+</html>
